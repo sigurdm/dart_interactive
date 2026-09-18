@@ -16,30 +16,26 @@ class WorkspaceCode {
     required this.generatedMethodCodeBlock,
   });
 
-  const WorkspaceCode.codeBlock({
-    required this.generatedMethodCodeBlock,
-  })  : imports = const {},
-        classMap = const {},
-        functionMap = const {},
-        miscDeclarationMap = const {};
+  const WorkspaceCode.codeBlock({required this.generatedMethodCodeBlock})
+    : imports = const {},
+      classMap = const {},
+      functionMap = const {},
+      miscDeclarationMap = const {};
 
   const WorkspaceCode.empty()
-      : imports = const {},
-        classMap = const {},
-        functionMap = const {},
-        miscDeclarationMap = const {},
-        generatedMethodCodeBlock = '';
+    : imports = const {},
+      classMap = const {},
+      functionMap = const {},
+      miscDeclarationMap = const {},
+      generatedMethodCodeBlock = '';
 
   WorkspaceCode merge(WorkspaceCode other) => WorkspaceCode(
-        imports: {...imports, ...other.imports},
-        classMap: {...classMap, ...other.classMap},
-        functionMap: {...functionMap, ...other.functionMap},
-        miscDeclarationMap: {
-          ...miscDeclarationMap,
-          ...other.miscDeclarationMap
-        },
-        generatedMethodCodeBlock: other.generatedMethodCodeBlock,
-      );
+    imports: {...imports, ...other.imports},
+    classMap: {...classMap, ...other.classMap},
+    functionMap: {...functionMap, ...other.functionMap},
+    miscDeclarationMap: {...miscDeclarationMap, ...other.miscDeclarationMap},
+    generatedMethodCodeBlock: other.generatedMethodCodeBlock,
+  );
 
   String generate() {
     return '''
@@ -92,22 +88,21 @@ class ClassInfo {
   final String rawCode;
   final Set<String> potentialAccessors;
 
-  ClassInfo({
-    required this.rawCode,
-    required this.potentialAccessors,
-  });
+  ClassInfo({required this.rawCode, required this.potentialAccessors});
 
   String generate() {
     const kEnding = '}';
 
     if (!rawCode.endsWith(kEnding)) {
       log.info(
-          'generateClass skip since not endsWidth "$kEnding" (rawCode=$rawCode)');
+        'generateClass skip since not endsWidth "$kEnding" (rawCode=$rawCode)',
+      );
       return rawCode;
     }
 
-    final accessorCodes =
-        potentialAccessors.map(_generateAccessorCode).join('\n');
+    final accessorCodes = potentialAccessors
+        .map(_generateAccessorCode)
+        .join('\n');
 
     final replacedEnding = '$accessorCodes\n}';
 
