@@ -19,7 +19,7 @@ class VmServiceWrapper {
       );
     }
 
-    return connect(serverUri);
+    return await connect(serverUri);
   }
 
   static Future<VmServiceWrapper> connect(Uri serverUri) async {
