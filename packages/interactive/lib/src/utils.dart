@@ -42,10 +42,7 @@ Command getCrossPlatformCommand(String command) {
     arguments = ['-c', command];
   }
 
-  return Command(
-    executable: executable,
-    arguments: arguments,
-  );
+  return Command(executable: executable, arguments: arguments);
 }
 
 class Command {

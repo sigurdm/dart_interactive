@@ -11,6 +11,7 @@ import 'package:analyzer/diagnostic/diagnostic.dart';
 import 'package:analyzer/error/listener.dart';
 import 'package:analyzer/source/line_info.dart';
 import 'package:analyzer/src/dart/scanner/scanner.dart';
+import 'package:analyzer/src/error/listener.dart';
 import 'package:analyzer/src/generated/parser.dart';
 import 'package:analyzer/src/string_source.dart';
 import 'package:interactive/src/workspace_code.dart';
@@ -22,7 +23,9 @@ class InputParser {
 
   WorkspaceCode? parse(String rawCode) {
     final compilationUnit = _tryParse(
-        rawCode, (parser, token) => parser.parseCompilationUnit(token));
+      rawCode,
+      (parser, token) => parser.parseCompilationUnit(token),
+    );
     if (compilationUnit != null) {
       // #16
       if (compilationUnit.declarations
@@ -75,9 +78,7 @@ class InputParser {
 
     // fallback as raw code
     log.info('parse return via raw code');
-    return WorkspaceCode.codeBlock(
-      generatedMethodCodeBlock: rawCode,
-    );
+    return WorkspaceCode.codeBlock(generatedMethodCodeBlock: rawCode);
   }
 
   Expression parseExpression(Parser parser, Token token) {
@@ -88,8 +89,8 @@ class InputParser {
   }
 }
 
-typedef ParserClosure<T extends AstNode> = T Function(
-    Parser parser, Token token);
+typedef ParserClosure<T extends AstNode> =
+    T Function(Parser parser, Token token);
 
 // ref: https://github.com/BlackHC/dart_repl/blob/ad568604f41be31fbc8d809d5e0cfa25a6cd5601/lib/src/cell_type.dart#L18
 T? _tryParse<T extends AstNode>(String code, ParserClosure<T> parse) {
@@ -97,18 +98,24 @@ T? _tryParse<T extends AstNode>(String code, ParserClosure<T> parse) {
   final diagnosticsListener = _LoggingDiagnosticsListener();
   final reporter = DiagnosticReporter(diagnosticsListener, source);
   final featureSet = FeatureSet.latestLanguageVersion();
-  final scanner = Scanner(code, reporter)
+  final scanner = Scanner(inputText: code, reportError: reporter.report)
     ..configureFeatures(
-        featureSetForOverriding: featureSet, featureSet: featureSet);
+      featureSetForOverriding: featureSet,
+      featureSet: featureSet,
+    );
   final token = scanner.tokenize();
   // actual version via sem ver is before the first space. so, we leverage the runtime's version, ignoring override currently.
   final languageVersionViaRuntime = Platform.version.split(' ').first;
 
-  final parser = Parser(reporter,
-      featureSet: featureSet,
-      lineInfo: LineInfo.fromContent(code),
-      languageVersion: LibraryLanguageVersion(
-          package: Version.parse(languageVersionViaRuntime), override: null));
+  final parser = Parser(
+    reporter,
+    featureSet: featureSet,
+    lineInfo: LineInfo.fromContent(code),
+    languageVersion: LibraryLanguageVersion(
+      package: Version.parse(languageVersionViaRuntime),
+      override: null,
+    ),
+  );
 
   final result = parse(parser, token);
 
@@ -160,7 +167,8 @@ class _PotentialAccessorParser {
     final potentialAccessors = visitor.potentialAccessors;
     final fieldNames = _parseFieldNames(value);
     log.info(
-        'parseClassDeclaration potentialAccessors=$potentialAccessors fieldNames=$fieldNames');
+      'parseClassDeclaration potentialAccessors=$potentialAccessors fieldNames=$fieldNames',
+    );
     return potentialAccessors.difference(fieldNames);
   }
 
@@ -178,9 +186,11 @@ class _PotentialAccessorVisitor extends GeneralizingAstVisitor<void> {
 
   @override
   void visitExpression(Expression node) {
-    log.warning('expression of type ${node.runtimeType} not implemented yet '
-        '(should be quite trivial - not implemented simply because I never see it in tests), '
-        'please raise issue or PR. node=$node');
+    log.warning(
+      'expression of type ${node.runtimeType} not implemented yet '
+      '(should be quite trivial - not implemented simply because I never see it in tests), '
+      'please raise issue or PR. node=$node',
+    );
   }
 
   @override

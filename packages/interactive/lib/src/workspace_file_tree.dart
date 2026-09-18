@@ -27,8 +27,9 @@ class WorkspaceFileTree {
       p.join(directory, '.dart_tool', 'package_config.json');
 
   static Future<String> getTempDirectory() async => p.join(
-      Directory.systemTemp.path,
-      'dart_interactive_workspace_${DateTime.now().toIso8601String().replaceAll(":", "").replaceAll(".", "")}');
+    Directory.systemTemp.path,
+    'dart_interactive_workspace_${DateTime.now().toIso8601String().replaceAll(":", "").replaceAll(".", "")}',
+  );
 
   static Future<void> _prepare(String dir) async {
     Directory(dir).createSync(recursive: true);

@@ -2,17 +2,15 @@ import 'package:interactive/src/main.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('simplest',
-      () => _body(inputs: ['"hi"', '10+20'], expectOutputs: ['hi', '30']));
+  test(
+    'simplest',
+    () => _body(inputs: ['"hi"', '10+20'], expectOutputs: ['hi', '30']),
+  );
 
   test(
     'read and write variables',
     () => _body(
-      inputs: [
-        'a = 42; b = "wow";',
-        'a++; b += " dart";',
-        r'"$a $b"',
-      ],
+      inputs: ['a = 42; b = "wow";', 'a++; b += " dart";', r'"$a $b"'],
       expectOutputs: ['43 wow dart'],
     ),
   );
@@ -28,10 +26,7 @@ void main() {
         'a = f();',
         'a',
       ],
-      expectOutputs: [
-        'old',
-        'new',
-      ],
+      expectOutputs: ['old', 'new'],
     ),
   );
 
@@ -46,11 +41,7 @@ void main() {
         'c.f()',
         'C().f()',
       ],
-      expectOutputs: [
-        '20',
-        '30',
-        '3000',
-      ],
+      expectOutputs: ['20', '30', '3000'],
     ),
   );
 
@@ -63,10 +54,7 @@ void main() {
         'int g() => 4200; class C { int a = 10; int f() => a * 3; }',
         'C().f() + g()',
       ],
-      expectOutputs: [
-        '62',
-        '4230',
-      ],
+      expectOutputs: ['62', '4230'],
     ),
   );
 
@@ -79,10 +67,7 @@ void main() {
         'class A { int f() => 100; }',
         'A().f() + B().f()',
       ],
-      expectOutputs: [
-        '30',
-        '120',
-      ],
+      expectOutputs: ['30', '120'],
     ),
   );
 
@@ -95,10 +80,7 @@ void main() {
         'class A { int f() => 100; }',
         'A().f() + B().f()',
       ],
-      expectOutputs: [
-        '30',
-        '120',
-      ],
+      expectOutputs: ['30', '120'],
     ),
   );
 
@@ -117,65 +99,39 @@ void main() {
         'import "dart:math";',
         'Random().nextInt(1)',
       ],
-      expectOutputs: [
-        '0',
-        '0',
-      ],
+      expectOutputs: ['0', '0'],
     ),
   );
 
   test(
     'function uses local variable',
     () => _body(
-      inputs: [
-        'int f() { int a = 0; return a++; }',
-        'f()',
-      ],
-      expectOutputs: [
-        '0',
-      ],
+      inputs: ['int f() { int a = 0; return a++; }', 'f()'],
+      expectOutputs: ['0'],
     ),
   );
 
   test(
     'function uses global variable',
     () => _body(
-      inputs: [
-        'a = 1;',
-        'int f() => a++;',
-        'f()',
-        'a',
-      ],
-      expectOutputs: [
-        '1',
-        '2',
-      ],
+      inputs: ['a = 1;', 'int f() => a++;', 'f()', 'a'],
+      expectOutputs: ['1', '2'],
     ),
   );
 
   test(
     'class method uses local variable',
     () => _body(
-      inputs: [
-        'class C { int f() { int a = 10; return a++; } }',
-        'C().f()',
-      ],
-      expectOutputs: [
-        '10',
-      ],
+      inputs: ['class C { int f() { int a = 10; return a++; } }', 'C().f()'],
+      expectOutputs: ['10'],
     ),
   );
 
   test(
     'class method uses field',
     () => _body(
-      inputs: [
-        'class C { int a = 10; int f() { return a++; } }',
-        'C().f()',
-      ],
-      expectOutputs: [
-        '10',
-      ],
+      inputs: ['class C { int a = 10; int f() { return a++; } }', 'C().f()'],
+      expectOutputs: ['10'],
     ),
   );
 
@@ -188,10 +144,7 @@ void main() {
         'C().f()',
         'a',
       ],
-      expectOutputs: [
-        '10',
-        '11',
-      ],
+      expectOutputs: ['10', '11'],
     ),
   );
 
@@ -212,10 +165,7 @@ void main() {
   test(
     'Print all types of variables without needing print statement #47',
     () => _body(
-      inputs: [
-        'class Foo {}',
-        'Foo()',
-      ],
+      inputs: ['class Foo {}', 'Foo()'],
       expectOutputs: [
         // should call toString to that object
         "Instance of 'Foo'",
@@ -231,9 +181,7 @@ void main() {
         // the method exists. should test executing it by hand.
         r'"$exit"',
       ],
-      expectOutputs: [
-        "Closure: () => Never from Function 'exit': static.",
-      ],
+      expectOutputs: ["Closure: () => Never from Function 'exit': static."],
     ),
   );
 
@@ -250,9 +198,7 @@ void main() {
         expect(actual.first.trimRight(), 'Resolving dependencies...');
         final afterAdd = _getLinesAfter(actual, 'after pub add');
 
-        expect(afterAdd, [
-          'a/b',
-        ]);
+        expect(afterAdd, ['a/b']);
       },
     ),
   );

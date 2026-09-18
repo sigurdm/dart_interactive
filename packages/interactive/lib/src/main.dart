@@ -53,10 +53,13 @@ Future<void> run({
   _setUpLogging(verbose ? Level.ALL : Level.WARNING);
 
   final workspaceFileTree = await WorkspaceFileTree.create(
-      directory ?? await WorkspaceFileTree.getTempDirectory());
+    directory ?? await WorkspaceFileTree.getTempDirectory(),
+  );
 
-  final executor =
-      await Executor.create(writer, workspaceFileTree: workspaceFileTree);
+  final executor = await Executor.create(
+    writer,
+    workspaceFileTree: workspaceFileTree,
+  );
   try {
     for (final input in reader()) {
       await executor.execute(input);
@@ -70,6 +73,8 @@ Future<void> run({
 void _setUpLogging(Level level) {
   Logger.root
     ..level = level
-    ..onRecord.listen((record) =>
-        print('[${record.level.name} ${record.time}] ${record.message}'));
+    ..onRecord.listen(
+      (record) =>
+          print('[${record.level.name} ${record.time}] ${record.message}'),
+    );
 }
