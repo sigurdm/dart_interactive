@@ -105,11 +105,19 @@ class Executor {
     log.info('Phase: Evaluate');
     final isolateInfo = await workspaceIsolate.isolateInfo;
     final targetId = isolateInfo.rootLib!.id!;
-    final response = await vm.vmService.evaluate(
-      workspaceIsolate.isolateId,
-      targetId,
-      _evaluateCode,
-    );
+    final Response response;
+    try {
+      response = await vm.vmService.evaluate(
+        workspaceIsolate.isolateId,
+        targetId,
+        _evaluateCode,
+      );
+    } on RPCError {
+      // If the evaluated expression called `exit()`, the child VM process
+      // terminates and closes the VM service connection while `evaluate` is
+      // in flight. Wait for the child exit handler to terminate the process.
+      exit(await workspaceIsolate.process.exitCode);
+    }
     await _handleEvaluateResponse(response);
   }
 
